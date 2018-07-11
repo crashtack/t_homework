@@ -29,16 +29,19 @@ https://www.arangodb.com/download-major/
 ### Add ArangoDB root password to environment variables
 Edit ```server_report_gen/bin/activate```
 
-add
+add the following to the bottom of the file.
+
 ```export ARANGO_PASSWORD="whatever you set the Arango root password to"```
 
 ### Install required packages
 ```
 $ pip install pyarango
 $ pip install pytest
+```
 
 ## Running
 To run Server Status Report Generator type.
+
 ```
 $ python server_status.py
 ```
