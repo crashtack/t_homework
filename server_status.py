@@ -24,11 +24,6 @@ COLLECTION = 'server_report'
 
 CONN = Connection(username="root", password=os.environ['ARANGO_PASSWORD'])
 
-try:
-    DB = CONN[SERVER]
-    COLL = DB[COLLECTION]
-except KeyError:
-    db_initialize(SERVER, COLLECTION)
 
 
 def db_initialize(server, collection):
@@ -58,8 +53,8 @@ class ServerStatus(object):
         self.data = json.loads(response.content)
         return self.data
 
-    def save_status(self):
-        db_save_element(COLL, f'{self.key}', self.data)
+    def save_status(self, coll):
+        db_save_element(coll, f'{self.key}', self.data)
 
 
 def line_to_key(line):
@@ -67,11 +62,11 @@ def line_to_key(line):
     key = split[1].strip('0').rstrip()
     return key
 
-def query_application(app):
+def query_application(app, db):
     aql = """FOR x in {0}
                 FILTER x.Application == '{1}'
                 RETURN x""".format(COLLECTION, app)
-    query_results = DB.AQLQuery(aql, rawResults=True, batchSize=10)
+    query_results = db.AQLQuery(aql, rawResults=True, batchSize=10)
     versions = []
     for result in query_results:
         if result['Version'] not in versions:
@@ -79,12 +74,12 @@ def query_application(app):
     versions.sort()
     return versions
 
-def query_application_version(app, ver):
+def query_application_version(app, ver, db):
     aql = """FOR x in {0}
                  FILTER x.Application == '{1}'
                  FILTER x.Version == '{2}'
                  RETURN x""".format(COLLECTION, app, ver)
-    query_results = DB.AQLQuery(aql, rawResults=True, batchSize=10)
+    query_results = db.AQLQuery(aql, rawResults=True, batchSize=10)
     return query_results
 
 def generate_report(results, file_name):
@@ -137,6 +132,14 @@ def main():
         Create reports by quering DB.
     """
 
+    try:
+        db = CONN[SERVER]
+        coll = db[COLLECTION]
+    except KeyError:
+        db_initialize(SERVER, COLLECTION)
+        db = CONN[SERVER]
+        coll = db[COLLECTION]
+
     file_name = 'server_report-{}.log'.format(strftime("%Y-%m-%d::%H:%M:%S", gmtime()))
     applications = []
 
@@ -147,7 +150,7 @@ def main():
             data = server.get_status()
             if data['Application'] not in applications:
                 applications.append(data['Application'])
-            server.save_status()
+            server.save_status(coll)
 
     applications.sort()
 
@@ -161,9 +164,9 @@ def main():
     ))
 
     for app in applications:
-        versions = query_application(app)
+        versions = query_application(app, db)
         for ver in versions:
-            results = query_application_version(app, ver)
+            results = query_application_version(app, ver, db)
             generate_report(results, file_name)
 
 

@@ -5,8 +5,8 @@ from server_status import ServerStatus, line_to_key
 from server_status import query_application, query_application_version, db_initialize
 
 
-SERVER = 'server_status'
-COLLECTION = 'server_status'
+SERVER = 'server_report'
+COLLECTION = 'server_report'
 
 CONN = Connection(username="root", password=os.environ['ARANGO_PASSWORD'])
 DB = CONN[SERVER]
@@ -24,7 +24,7 @@ def test_server_get_status():
 def test_save_status():
     server = ServerStatus(1)
     server.get_status()
-    server.save_status()
+    server.save_status(COLL)
     element = COLL['1']
     assert element['Application'] == 'Cache2'
 
@@ -32,10 +32,10 @@ def test_line_to_key():
     assert line_to_key("server-0022") == '22'
 
 def test_query_application():
-    assert len(query_application('Cache1')) == 18
+    assert len(query_application('Cache1', DB)) == 18
 
 def test_query_application_version():
-    results = query_application_version('Cache1', '0.0.2')
+    results = query_application_version('Cache1', '0.0.2', DB)
     assert len(results) == 10
 
 def test_db_initialize():
