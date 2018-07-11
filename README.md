@@ -1,8 +1,8 @@
 # Server Status Report Generator
-Server Status Report Generator will query servers bases on a list of servers in 
-the servers.txt file. The individual server status are saved to an ArangoDB 
-collection and then a query is done to generate an aggregated report. The report
-will output to the console and to a time stamped log file.
+Server Status Report Generator will query servers based on a list of servers in 
+servers.txt file. The individual server status are saved to an ArangoDB 
+collection and then a queries are run to generate an aggregated report of Applications
+and Versions. The report will output to the console and to a time stamped log file.
 
 ## Setup
 
