@@ -39,9 +39,17 @@ $ pip install pyarango
 $ pip install pytest
 ```
 
+### Clone this repo into virtual environment
+cd into the 'server_report_gen' directory and git clone this repo
+
+```
+$ git clone https://github.com/crashtack/t_homework.git
+```
+
 ## Running
 To run Server Status Report Generator type.
 
 ```
+$ cd t_homework
 $ python server_status.py
 ```
