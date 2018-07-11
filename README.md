@@ -31,5 +31,5 @@ https://www.arangodb.com/download-major/
 ### Install required packages
 ```
 $ pip install pyarango
-
+$ pip install pytest
 

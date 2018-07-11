@@ -19,12 +19,16 @@ from time import gmtime, strftime
 #[ ] TODO: Logging and metrix code. Not for MVP
 
 
-SERVER = 'server_status'
-COLLECTION = 'server_status'
+SERVER = 'server_report'
+COLLECTION = 'server_report'
 
 CONN = Connection(username="root", password=os.environ['ARANGO_PASSWORD'])
-DB = CONN[SERVER]
-COLL = DB[COLLECTION]
+
+try:
+    DB = CONN[SERVER]
+    COLL = DB[COLLECTION]
+except KeyError:
+    db_initialize(SERVER, COLLECTION)
 
 
 def db_initialize(server, collection):
